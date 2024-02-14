@@ -14,32 +14,48 @@ enum Role {
 }
 
 model User {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  email       String        @unique
-  firstName   String?
-  lastName    String?
-  role        Role
-  Task        Task[]
-  Appointment Appointment[]
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
+  email            String        @unique
+  password         String
+  firstName        String?
+  lastName         String?
+  avatar           String?
+  role             Role
+  Task             Task[]
+  Appointment      Appointment[]
+  Message          Message[]
+  ReceivedMessages Message[]     @relation("messagesToUser")
 }
 
 model Task {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  completed Boolean
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  String?
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  priority    Int?
+  date        DateTime
+  completed   Boolean
+  author      User?    @relation(fields: [authorId], references: [id])
+  authorId    String?
 }
 
 model Appointment {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  title    String
-  date     DateTime
-  author   User?    @relation(fields: [authorId], references: [id])
-  authorId String?
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  status      String
+  date        DateTime
+  author      User?    @relation(fields: [authorId], references: [id])
+  authorId    String?
 }
 
-model Subject {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  title String
+model Message {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  text        String
+  file        String?
+  createdAt   DateTime
+  read        Boolean
+  author      User?    @relation(fields: [authorId], references: [id])
+  authorId    String?
+  recipient   User?    @relation("messagesToUser", fields: [recipientId], references: [id])
+  recipientId String?
 }
