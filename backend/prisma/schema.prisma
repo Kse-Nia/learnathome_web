@@ -1,0 +1,45 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  TUTOR
+  STUDENT
+}
+
+model User {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  email       String        @unique
+  firstName   String?
+  lastName    String?
+  role        Role
+  Task        Task[]
+  Appointment Appointment[]
+}
+
+model Task {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  completed Boolean
+  author    User?   @relation(fields: [authorId], references: [id])
+  authorId  String?
+}
+
+model Appointment {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  title    String
+  date     DateTime
+  author   User?    @relation(fields: [authorId], references: [id])
+  authorId String?
+}
+
+model Subject {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+}
